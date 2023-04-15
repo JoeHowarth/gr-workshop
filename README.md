@@ -3,13 +3,14 @@ Wormhole Generic Relayer Demo
 
 ## Quick Start
 ```bash
-yarn
-
 # If you haven't installed foundry:
 # curl -L https://foundry.paradigm.xyz | bash
 
 # confirm you have an wallet funded with Fuji Avax and Celo Alfajores 
 # at EVM_PRIVATE_KEY
+
+# Install nodejs dependencies
+yarn
 
 # deploy the contracts to the chains configured in ts-scripts/config.json
 # also cross-registers contracts with each other 
