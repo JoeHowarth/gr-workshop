@@ -1,0 +1,12 @@
+{
+  "counter": [
+    {
+      "address": "0x58041133Ba93C90Df7B857d2c7c2D546b40F49FF",
+      "chainId": 6
+    },
+    {
+      "address": "0x2c7bDBa0773ead8CeE572cca9a68868030e26581",
+      "chainId": 14
+    }
+  ]
+}

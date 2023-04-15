@@ -5,6 +5,9 @@
   "author": "Joe Howarth <jhowarth@jumptrading.com>",
   "license": "MIT",
   "scripts": {
+    "deploy": "tsx ts-scripts/deploy.ts",
+    "increment": "tsx ts-scripts/main.ts increment",
+    "read": "tsx ts-scripts/main.ts read",
     "build-types": "typechain --target=ethers-v5 --out-dir=./ts-scripts/ethers-contracts ./out/Counter.sol/Counter.json"
   },
   "dependencies": {

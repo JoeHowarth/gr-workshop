@@ -1,15 +1,22 @@
 import * as ethers from "ethers";
 import { Counter__factory } from "./ethers-contracts";
 import { Wallet } from "ethers";
-import { loadConfig } from "./utils";
+import {
+  DeployedAddresses,
+  loadConfig,
+  loadWallet,
+  storeDeployedAddresses,
+} from "./utils";
+import { writeFileSync } from "fs";
 
 async function main() {
   const { chains } = loadConfig();
-  const wallet = new Wallet(process.env.EVM_PRIVATE_KEY!);
+  const deployed: DeployedAddresses = { counter: [] };
 
-  const addresses = [] as string[];
   // deploy contract on all chains
   for (const chain of chains) {
+    console.log(`Deploying chain ${chain.chainId}`);
+    const wallet = loadWallet(chain.chainId);
     const tx = await new ethers.ContractFactory(
       Counter__factory.createInterface(),
       Counter__factory.bytecode,
@@ -20,23 +27,39 @@ async function main() {
       chain.chainId
     );
     const contract = await tx.deployed();
-    addresses.push(contract.address);
+    deployed.counter.push({
+      address: contract.address,
+      chainId: chain.chainId,
+    });
   }
+
+  console.log("Deployed addresses: ", deployed);
 
   // cross register all contracts
   for (let i = 0; i < chains.length; i++) {
-    const counter = Counter__factory.connect(addresses[i], wallet);
+    const wallet = loadWallet(chains[i].chainId);
+    const counter = Counter__factory.connect(
+      deployed.counter[i].address,
+      wallet
+    );
     for (let j = 0; j < chains.length; j++) {
       if (i == j) {
         continue;
       }
+      console.log(
+        `Registering chain ${chains[j].chainId} with ${chains[i].chainId}`
+      );
       const tx = await counter.registerContract(
-        addresses[j],
+        deployed.counter[j].address,
         chains[j].chainId
       );
-      await tx.wait();
+      const rx = await tx.wait();
+      console.log("txHash: ", rx.transactionHash);
     }
   }
+
+  // write addresses
+  storeDeployedAddresses(deployed);
 }
 
 main().catch((e) => {
