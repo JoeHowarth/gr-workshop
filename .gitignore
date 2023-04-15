@@ -1,11 +1,13 @@
-# Compiler files
-cache/
+anvil.log
+deploy.out
+cache
+broadcast
+build
+lib
+node_modules
+wormhole
+ts-scripts/output
+ts-scripts/.env
+ts-scripts/.env.testnet
+ts-scripts/.env.mainnet
 out/
-
-# Ignores development broadcast logs
-!/broadcast
-/broadcast/*/31337/
-/broadcast/**/dry-run/
-
-# Dotenv file
-.env

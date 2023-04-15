@@ -1,0 +1,20 @@
+{
+  "name": "gr-workshop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Joe Howarth <jhowarth@jumptrading.com>",
+  "license": "MIT",
+  "scripts": {
+    "build-types": "typechain --target=ethers-v5 --out-dir=./ts-scripts/ethers-contracts ./out/Counter.sol/Counter.json"
+  },
+  "dependencies": {
+    "@typechain/ethers-v5": "^10.2.0",
+    "ethers": "^5",
+    "wormhole-sdk": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "tsx": "^3.12.6",
+    "typechain": "^8.1.1"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "chains": [
+    {
+      "description": "Avalanche testnet fuji",
+      "chainId": 6,
+      "rpc": "https://api.avax-test.network/ext/bc/C/rpc",
+      "wormholeRelayerAddress": "0x607cE9D0f9Cd772Dab917507C331257FF561DBA5",
+      "wormholeAddress": "0x7bbcE28e64B3F8b84d876Ab298393c38ad7aac4C"
+    },
+    {
+      "description": "Celo Testnet",
+      "chainId": 14,
+      "rpc": "https://alfajores-forno.celo-testnet.org",
+      "wormholeRelayerAddress": "0x38bCfa6D311154824Bb98EE9D7e9bD6f5C706aab",
+      "wormholeAddress": "0x88505117CA88e7dd2eC6EA1E13f0948db2D50D56"
+    }
+  ]
+}
