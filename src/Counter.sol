@@ -9,15 +9,16 @@ import "./libraries/BytesLib.sol";
 contract Counter is IWormholeReceiver {
     using BytesLib for bytes;
 
+    // state variables
     uint256 public number;
+    uint16[] public registeredChains;
+    mapping(uint16 => bytes32) public registeredChainToAddress;
 
     address public immutable owner;
     address public immutable wormhole;
     address public immutable wormholeRelayer;
     uint16 public immutable chainId;
 
-    uint16[] public registeredChains;
-    mapping(uint16 => bytes32) public registeredChainToAddress;
 
     constructor(address _wormhole, address _wormholeRelayer, uint16 _chainId) {
         wormhole = _wormhole;
@@ -45,11 +46,14 @@ contract Counter is IWormholeReceiver {
 
             IWormholeRelayer.VaaKey[] memory keys = new IWormholeRelayer.VaaKey[](0);
             IWormholeRelayer(wormholeRelayer).send{value: cost}(
+                // targetChain
                 _chainId,
                 _targetAddress,
+                // refundChain
                 _chainId,
+                // refundAddress
                 _targetAddress,
-                cost, // todo: improve this
+                cost, 
                 0,
                 abi.encode(number),
                 keys,
