@@ -50,29 +50,47 @@ export declare namespace IWormholeReceiver {
 
 export interface CounterInterface extends utils.Interface {
   functions: {
+    "chainId()": FunctionFragment;
     "getNumber()": FunctionFragment;
     "increment()": FunctionFragment;
+    "literalSend(uint16,bytes32)": FunctionFragment;
     "number()": FunctionFragment;
+    "owner()": FunctionFragment;
     "receiveWormholeMessages((bytes32,uint16,uint256,bytes32,bytes),bytes[])": FunctionFragment;
     "registerContract(address,uint16)": FunctionFragment;
     "registeredChainToAddress(uint16)": FunctionFragment;
     "registeredChains(uint256)": FunctionFragment;
+    "testSend()": FunctionFragment;
+    "wormhole()": FunctionFragment;
+    "wormholeRelayer()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "chainId"
       | "getNumber"
       | "increment"
+      | "literalSend"
       | "number"
+      | "owner"
       | "receiveWormholeMessages"
       | "registerContract"
       | "registeredChainToAddress"
       | "registeredChains"
+      | "testSend"
+      | "wormhole"
+      | "wormholeRelayer"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "chainId", values?: undefined): string;
   encodeFunctionData(functionFragment: "getNumber", values?: undefined): string;
   encodeFunctionData(functionFragment: "increment", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "literalSend",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(functionFragment: "number", values?: undefined): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "receiveWormholeMessages",
     values: [IWormholeReceiver.DeliveryDataStruct, PromiseOrValue<BytesLike>[]]
@@ -89,10 +107,22 @@ export interface CounterInterface extends utils.Interface {
     functionFragment: "registeredChains",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "testSend", values?: undefined): string;
+  encodeFunctionData(functionFragment: "wormhole", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "wormholeRelayer",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(functionFragment: "chainId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getNumber", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "increment", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "literalSend",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "number", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "receiveWormholeMessages",
     data: BytesLike
@@ -107,6 +137,12 @@ export interface CounterInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "registeredChains",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "testSend", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "wormhole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "wormholeRelayer",
     data: BytesLike
   ): Result;
 
@@ -140,13 +176,23 @@ export interface Counter extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    chainId(overrides?: CallOverrides): Promise<[number]>;
+
     getNumber(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     increment(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    literalSend(
+      _chainId: PromiseOrValue<BigNumberish>,
+      _targetAddress: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     number(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
     receiveWormholeMessages(
       _deliveryData: IWormholeReceiver.DeliveryDataStruct,
@@ -169,7 +215,17 @@ export interface Counter extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[number]>;
+
+    testSend(
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    wormhole(overrides?: CallOverrides): Promise<[string]>;
+
+    wormholeRelayer(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  chainId(overrides?: CallOverrides): Promise<number>;
 
   getNumber(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -177,7 +233,15 @@ export interface Counter extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  literalSend(
+    _chainId: PromiseOrValue<BigNumberish>,
+    _targetAddress: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   number(overrides?: CallOverrides): Promise<BigNumber>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
 
   receiveWormholeMessages(
     _deliveryData: IWormholeReceiver.DeliveryDataStruct,
@@ -201,12 +265,30 @@ export interface Counter extends BaseContract {
     overrides?: CallOverrides
   ): Promise<number>;
 
+  testSend(
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  wormhole(overrides?: CallOverrides): Promise<string>;
+
+  wormholeRelayer(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
+    chainId(overrides?: CallOverrides): Promise<number>;
+
     getNumber(overrides?: CallOverrides): Promise<BigNumber>;
 
     increment(overrides?: CallOverrides): Promise<void>;
 
+    literalSend(
+      _chainId: PromiseOrValue<BigNumberish>,
+      _targetAddress: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     number(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
 
     receiveWormholeMessages(
       _deliveryData: IWormholeReceiver.DeliveryDataStruct,
@@ -229,18 +311,34 @@ export interface Counter extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<number>;
+
+    testSend(overrides?: CallOverrides): Promise<void>;
+
+    wormhole(overrides?: CallOverrides): Promise<string>;
+
+    wormholeRelayer(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
+    chainId(overrides?: CallOverrides): Promise<BigNumber>;
+
     getNumber(overrides?: CallOverrides): Promise<BigNumber>;
 
     increment(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    literalSend(
+      _chainId: PromiseOrValue<BigNumberish>,
+      _targetAddress: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     number(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     receiveWormholeMessages(
       _deliveryData: IWormholeReceiver.DeliveryDataStruct,
@@ -263,16 +361,34 @@ export interface Counter extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    testSend(
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    wormhole(overrides?: CallOverrides): Promise<BigNumber>;
+
+    wormholeRelayer(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    chainId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getNumber(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     increment(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    literalSend(
+      _chainId: PromiseOrValue<BigNumberish>,
+      _targetAddress: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     number(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     receiveWormholeMessages(
       _deliveryData: IWormholeReceiver.DeliveryDataStruct,
@@ -295,5 +411,13 @@ export interface Counter extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    testSend(
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    wormhole(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    wormholeRelayer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

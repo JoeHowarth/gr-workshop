@@ -8,6 +8,7 @@ import {
   storeDeployedAddresses,
 } from "./utils";
 import { writeFileSync } from "fs";
+import { tryNativeToHexString } from "@certusone/wormhole-sdk";
 
 async function main() {
   const { chains } = loadConfig();
@@ -42,10 +43,20 @@ async function main() {
       deployed.counter[i].address,
       wallet
     );
+
+    // console.log(await counter.thisInWormholeFormat());
     for (let j = 0; j < chains.length; j++) {
       if (i == j) {
         continue;
       }
+
+      const isEqual = await counter.isEqual(
+        deployed.counter[j].chainId,
+        "0x" + tryNativeToHexString(deployed.counter[j].address, "ethereum"),
+        { value: ethers.BigNumber.from(10).pow(18), gasLimit: 300_000 }
+      );
+      console.log("isEqual: ", isEqual);
+
       console.log(
         `Registering chain ${chains[j].chainId} with ${chains[i].chainId}`
       );

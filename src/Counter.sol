@@ -11,10 +11,11 @@ contract Counter is IWormholeReceiver {
 
     uint256 public number;
 
-    address immutable owner;
-    address immutable wormhole;
-    address immutable wormholeRelayer;
-    uint16 immutable chainId;
+    address public immutable owner;
+    address public immutable wormhole;
+    address public immutable wormholeRelayer;
+    uint16 public immutable chainId;
+    // bytes32 public immutable thisInWormholeFormat;
 
     uint16[] public registeredChains;
     mapping(uint16 => bytes32) public registeredChainToAddress;
@@ -24,6 +25,7 @@ contract Counter is IWormholeReceiver {
         wormholeRelayer = _wormholeRelayer;
         chainId = _chainId;
         owner = msg.sender;
+        // thisInWormholeFormat = IWormholeRelayer(_wormholeRelayer).toWormholeFormat(address(this));
     }
 
     function getNumber() external view returns (uint256) {
@@ -32,11 +34,12 @@ contract Counter is IWormholeReceiver {
 
     function increment() public payable {
         number++;
+        IWormholeRelayer.VaaKey[] memory keys = new IWormholeRelayer.VaaKey[](0);
         for (uint256 i = 0; i < registeredChains.length; i++) {
             uint16 targetChain = registeredChains[i];
             bytes32 targetAddress = registeredChainToAddress[targetChain];
             // Broadcast the increment to all registered contracts
-            IWormholeRelayer(wormholeRelayer).send(
+            IWormholeRelayer(wormholeRelayer).send{value: msg.value}(
                 // targetChain
                 targetChain,
                 // targetAddress
@@ -51,9 +54,31 @@ contract Counter is IWormholeReceiver {
                 // receiverValue - aka how much to spend buying target chain native currency
                 0,
                 // payload
-                abi.encode(number)
+                abi.encode(number),
+                keys,
+                200
             );
         }
+    }
+
+    function isEqual(uint16 _chainId, bytes32 _targetAddress) public view returns (bool) { 
+        return _chainId == registeredChains[0] && registeredChainToAddress[_chainId] == _targetAddress;
+    }
+
+    function literalSend(uint16 _chainId, bytes32 _targetAddress) public payable {
+        number++;
+        IWormholeRelayer.VaaKey[] memory keys = new IWormholeRelayer.VaaKey[](0);
+        IWormholeRelayer(wormholeRelayer).send{value: msg.value}(
+            _chainId,
+            _targetAddress,
+            _chainId,
+            _targetAddress,
+            msg.value, // todo: improve this
+            0,
+            abi.encode(number),
+            keys,
+            200
+        );
     }
 
     function registerContract(address _addr, uint16 _chainId) external onlyOwner {
@@ -62,10 +87,10 @@ contract Counter is IWormholeReceiver {
     }
 
     function receiveWormholeMessages(DeliveryData memory _deliveryData, bytes[] memory) external payable {
-        require(
-            registeredChainToAddress[_deliveryData.sourceChain] == _deliveryData.sourceAddress,
-            "Unregistered sending contract"
-        );
+        // require(
+        //     registeredChainToAddress[_deliveryData.sourceChain] == _deliveryData.sourceAddress,
+        //     "Unregistered sending contract"
+        // );
         number++;
     }
 

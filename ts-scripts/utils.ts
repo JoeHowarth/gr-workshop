@@ -48,10 +48,19 @@ export function storeDeployedAddresses(deployed: DeployedAddresses) {
   );
 }
 
+export function checkFlag(patterns: string | string[]) {
+  return getArg(patterns, { required: false, isFlag: true });
+}
+
 export function getArg(
   patterns: string | string[],
-  isFlag = false,
-  required = true
+  {
+    isFlag = false,
+    required = true,
+  }: { isFlag?: boolean; required?: boolean } = {
+    isFlag: false,
+    required: true,
+  }
 ): string | undefined {
   let idx: number = -1;
   if (typeof patterns === "string") {

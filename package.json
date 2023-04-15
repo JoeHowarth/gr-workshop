@@ -5,15 +5,17 @@
   "author": "Joe Howarth <jhowarth@jumptrading.com>",
   "license": "MIT",
   "scripts": {
-    "deploy": "tsx ts-scripts/deploy.ts",
+    "deploy": "forge build; yarn build-types; tsx ts-scripts/deploy.ts",
     "increment": "tsx ts-scripts/main.ts increment",
     "read": "tsx ts-scripts/main.ts read",
+    "registered": "tsx ts-scripts/main.ts registered",
+    "main": "tsx ts-scripts/main.ts",
     "build-types": "typechain --target=ethers-v5 --out-dir=./ts-scripts/ethers-contracts ./out/Counter.sol/Counter.json"
   },
   "dependencies": {
+    "@certusone/wormhole-sdk": "^0.9.12",
     "@typechain/ethers-v5": "^10.2.0",
-    "ethers": "^5",
-    "wormhole-sdk": "^1.6.0"
+    "ethers": "^5"
   },
   "devDependencies": {
     "@types/node": "^18.15.11",
