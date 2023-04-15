@@ -50,13 +50,6 @@ async function main() {
         continue;
       }
 
-      const isEqual = await counter.isEqual(
-        deployed.counter[j].chainId,
-        "0x" + tryNativeToHexString(deployed.counter[j].address, "ethereum"),
-        { value: ethers.BigNumber.from(10).pow(18), gasLimit: 300_000 }
-      );
-      console.log("isEqual: ", isEqual);
-
       console.log(
         `Registering chain ${chains[j].chainId} with ${chains[i].chainId}`
       );

@@ -53,14 +53,13 @@ export interface CounterInterface extends utils.Interface {
     "chainId()": FunctionFragment;
     "getNumber()": FunctionFragment;
     "increment()": FunctionFragment;
-    "literalSend(uint16,bytes32)": FunctionFragment;
+    "isEqual(uint16,bytes32)": FunctionFragment;
     "number()": FunctionFragment;
     "owner()": FunctionFragment;
     "receiveWormholeMessages((bytes32,uint16,uint256,bytes32,bytes),bytes[])": FunctionFragment;
     "registerContract(address,uint16)": FunctionFragment;
     "registeredChainToAddress(uint16)": FunctionFragment;
     "registeredChains(uint256)": FunctionFragment;
-    "testSend()": FunctionFragment;
     "wormhole()": FunctionFragment;
     "wormholeRelayer()": FunctionFragment;
   };
@@ -70,14 +69,13 @@ export interface CounterInterface extends utils.Interface {
       | "chainId"
       | "getNumber"
       | "increment"
-      | "literalSend"
+      | "isEqual"
       | "number"
       | "owner"
       | "receiveWormholeMessages"
       | "registerContract"
       | "registeredChainToAddress"
       | "registeredChains"
-      | "testSend"
       | "wormhole"
       | "wormholeRelayer"
   ): FunctionFragment;
@@ -86,7 +84,7 @@ export interface CounterInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "getNumber", values?: undefined): string;
   encodeFunctionData(functionFragment: "increment", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "literalSend",
+    functionFragment: "isEqual",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(functionFragment: "number", values?: undefined): string;
@@ -107,7 +105,6 @@ export interface CounterInterface extends utils.Interface {
     functionFragment: "registeredChains",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "testSend", values?: undefined): string;
   encodeFunctionData(functionFragment: "wormhole", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "wormholeRelayer",
@@ -117,10 +114,7 @@ export interface CounterInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "chainId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getNumber", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "increment", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "literalSend",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "isEqual", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "number", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -139,7 +133,6 @@ export interface CounterInterface extends utils.Interface {
     functionFragment: "registeredChains",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "testSend", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "wormhole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "wormholeRelayer",
@@ -184,11 +177,11 @@ export interface Counter extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    literalSend(
+    isEqual(
       _chainId: PromiseOrValue<BigNumberish>,
       _targetAddress: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     number(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -216,10 +209,6 @@ export interface Counter extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[number]>;
 
-    testSend(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     wormhole(overrides?: CallOverrides): Promise<[string]>;
 
     wormholeRelayer(overrides?: CallOverrides): Promise<[string]>;
@@ -233,11 +222,11 @@ export interface Counter extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  literalSend(
+  isEqual(
     _chainId: PromiseOrValue<BigNumberish>,
     _targetAddress: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   number(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -265,10 +254,6 @@ export interface Counter extends BaseContract {
     overrides?: CallOverrides
   ): Promise<number>;
 
-  testSend(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   wormhole(overrides?: CallOverrides): Promise<string>;
 
   wormholeRelayer(overrides?: CallOverrides): Promise<string>;
@@ -280,11 +265,11 @@ export interface Counter extends BaseContract {
 
     increment(overrides?: CallOverrides): Promise<void>;
 
-    literalSend(
+    isEqual(
       _chainId: PromiseOrValue<BigNumberish>,
       _targetAddress: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     number(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -312,8 +297,6 @@ export interface Counter extends BaseContract {
       overrides?: CallOverrides
     ): Promise<number>;
 
-    testSend(overrides?: CallOverrides): Promise<void>;
-
     wormhole(overrides?: CallOverrides): Promise<string>;
 
     wormholeRelayer(overrides?: CallOverrides): Promise<string>;
@@ -330,10 +313,10 @@ export interface Counter extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    literalSend(
+    isEqual(
       _chainId: PromiseOrValue<BigNumberish>,
       _targetAddress: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     number(overrides?: CallOverrides): Promise<BigNumber>;
@@ -362,10 +345,6 @@ export interface Counter extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    testSend(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     wormhole(overrides?: CallOverrides): Promise<BigNumber>;
 
     wormholeRelayer(overrides?: CallOverrides): Promise<BigNumber>;
@@ -380,10 +359,10 @@ export interface Counter extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    literalSend(
+    isEqual(
       _chainId: PromiseOrValue<BigNumberish>,
       _targetAddress: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     number(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -410,10 +389,6 @@ export interface Counter extends BaseContract {
     registeredChains(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    testSend(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     wormhole(overrides?: CallOverrides): Promise<PopulatedTransaction>;

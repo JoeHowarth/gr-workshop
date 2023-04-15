@@ -8,7 +8,7 @@ import {
   loadDeployedAddresses as getDeployedAddresses,
   loadWallet as getWallet,
 } from "./utils";
-import { tryNativeToHexString } from "@certusone/wormhole-sdk";
+// import { tryNativeToHexString } from "@certusone/wormhole-sdk";
 
 async function main() {
   if (checkFlag("increment")) {
@@ -17,6 +17,7 @@ async function main() {
   }
   if (checkFlag("registered")) {
     await registered();
+    return;
   }
   if (checkFlag("testSend")) {
     const deployed = getDeployedAddresses().counter.find(
@@ -26,9 +27,10 @@ async function main() {
       deployed.address,
       getWallet(deployed.chainId)
     );
-    await counter
-      .testSend({ value: ethers.BigNumber.from(10).pow(18), gasLimit: 300_000 })
-      .then((x) => x.wait());
+    // await counter
+    //   .testSend({ value: ethers.BigNumber.from(10).pow(18), gasLimit: 300_000 })
+    //   .then((x) => x.wait());
+    return;
   }
   await read();
 }
@@ -43,28 +45,25 @@ async function increment() {
       Counter__factory.connect(deployed.address, getWallet(deployed.chainId)),
     ])
   );
-  const tx_0 = await counters[chainId]
-    .literalSend(
-      14,
-      "0x" + tryNativeToHexString(counters[14].address, "ethereum"),
+  // const isEqual = await counters[chainId].isEqual(
+  //   14,
+  //   "0x" + tryNativeToHexString(counters[14].address, "ethereum")
+  // );
+  // console.log("isEqual: ", isEqual);
 
-      {
-        value: ethers.BigNumber.from(10).pow(18),
-        gasLimit: 300_000,
-      }
-    )
+  const tx_0 = await counters[chainId]
+    .increment({
+      value: ethers.BigNumber.from(10).pow(17),
+      gasLimit: 300_000,
+    })
     .then((x) => x.wait());
   console.log(tx_0.transactionHash);
-  // const tx = await counters[chainId]["increment()"]({
-  //   value: ethers.BigNumber.from(10).pow(18).mul(2),
-  //   gasLimit: 300_000,
-  // });
 
   // read state and poll for 10s
   await read("After Increment State: ");
   for (let i = 0; i < 10; i++) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    await read("1s State: ");
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await read();
   }
 }
 

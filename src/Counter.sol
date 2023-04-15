@@ -15,7 +15,6 @@ contract Counter is IWormholeReceiver {
     address public immutable wormhole;
     address public immutable wormholeRelayer;
     uint16 public immutable chainId;
-    // bytes32 public immutable thisInWormholeFormat;
 
     uint16[] public registeredChains;
     mapping(uint16 => bytes32) public registeredChainToAddress;
@@ -25,60 +24,43 @@ contract Counter is IWormholeReceiver {
         wormholeRelayer = _wormholeRelayer;
         chainId = _chainId;
         owner = msg.sender;
-        // thisInWormholeFormat = IWormholeRelayer(_wormholeRelayer).toWormholeFormat(address(this));
     }
 
     function getNumber() external view returns (uint256) {
         return number;
     }
 
+    function isEqual(uint16 _chainId, bytes32 _targetAddress) public view returns (bool) {
+        return _chainId == registeredChains[0] && registeredChainToAddress[_chainId] == _targetAddress;
+    }
+
     function increment() public payable {
         number++;
-        IWormholeRelayer.VaaKey[] memory keys = new IWormholeRelayer.VaaKey[](0);
+
+        uint256 sent = 0;
+        uint256 cost = 1e17;
         for (uint256 i = 0; i < registeredChains.length; i++) {
-            uint16 targetChain = registeredChains[i];
-            bytes32 targetAddress = registeredChainToAddress[targetChain];
-            // Broadcast the increment to all registered contracts
-            IWormholeRelayer(wormholeRelayer).send{value: msg.value}(
-                // targetChain
-                targetChain,
-                // targetAddress
-                targetAddress,
-                // refundChain
-                targetChain,
-                // refundAddress
-                // IWormholeRelayer(wormholeRelayer).toWormholeFormat(msg.sender),
-                targetAddress,
-                // maxTransactionFee - aka how to spend buying gas on the target chain
-                msg.value, // todo: improve this
-                // receiverValue - aka how much to spend buying target chain native currency
+            uint16 _chainId = registeredChains[i];
+            bytes32 _targetAddress = registeredChainToAddress[_chainId];
+
+            IWormholeRelayer.VaaKey[] memory keys = new IWormholeRelayer.VaaKey[](0);
+            IWormholeRelayer(wormholeRelayer).send{value: cost}(
+                _chainId,
+                _targetAddress,
+                _chainId,
+                _targetAddress,
+                cost, // todo: improve this
                 0,
-                // payload
                 abi.encode(number),
                 keys,
                 200
             );
+            sent += cost;
         }
-    }
-
-    function isEqual(uint16 _chainId, bytes32 _targetAddress) public view returns (bool) { 
-        return _chainId == registeredChains[0] && registeredChainToAddress[_chainId] == _targetAddress;
-    }
-
-    function literalSend(uint16 _chainId, bytes32 _targetAddress) public payable {
-        number++;
-        IWormholeRelayer.VaaKey[] memory keys = new IWormholeRelayer.VaaKey[](0);
-        IWormholeRelayer(wormholeRelayer).send{value: msg.value}(
-            _chainId,
-            _targetAddress,
-            _chainId,
-            _targetAddress,
-            msg.value, // todo: improve this
-            0,
-            abi.encode(number),
-            keys,
-            200
-        );
+        if (msg.value - sent > 0) {
+            (bool success,) = msg.sender.call{value: msg.value - sent}("");
+            require(success, "didn't succeed refunding caller");
+        }
     }
 
     function registerContract(address _addr, uint16 _chainId) external onlyOwner {
@@ -87,10 +69,10 @@ contract Counter is IWormholeReceiver {
     }
 
     function receiveWormholeMessages(DeliveryData memory _deliveryData, bytes[] memory) external payable {
-        // require(
-        //     registeredChainToAddress[_deliveryData.sourceChain] == _deliveryData.sourceAddress,
-        //     "Unregistered sending contract"
-        // );
+        require(
+            registeredChainToAddress[_deliveryData.sourceChain] == _deliveryData.sourceAddress,
+            "Unregistered sending contract"
+        );
         number++;
     }
 
