@@ -7,7 +7,9 @@ Wormhole Generic Relayer Demo
 # curl -L https://foundry.paradigm.xyz | bash
 
 # confirm you have an wallet funded with Fuji Avax and Celo Alfajores 
-# at EVM_PRIVATE_KEY
+echo $EVM_PRIVATE_KEY
+# if that key is not present, set it by doing:
+# EVM_PRIVATE_KEY=0x123..123 # your key here
 
 # Install nodejs dependencies
 yarn
